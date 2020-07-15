@@ -174,6 +174,12 @@ async function fetch_stable_version() {
 }
 
 async function prepare() {
+  let myStorage = window.localStorage;
+  let status = localStorage.getItem('update');
+  // if (status === 'in-progress'){
+  //   update();
+  // }
+
   await inspect_browser();
   await fetch_stable_version();
   // await check_version();
