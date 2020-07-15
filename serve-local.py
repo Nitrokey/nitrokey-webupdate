@@ -4,7 +4,7 @@ import sys
 
 # U2F requires serving over https
 # WebAuthn does not
-https = False
+https = True
 # https = '--https' in sys.argv
 
 host = "192.168.0.14" if https else 'localhost'
