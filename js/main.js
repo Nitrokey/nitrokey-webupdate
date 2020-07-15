@@ -326,6 +326,12 @@ async function fetch_firmware() {
   // TODO: cache downloads
   url_base = "data/";
   let fname = firmware_file_name[app.what_is_it]
+
+  if (!app.stable_version){
+    console.log("Invalid stable version", app.stable_version);
+    throw "Invalid stable version";
+  }
+
   let file_url = url_base + fname + app.stable_version + ".json";
   console.log(file_url);
 
