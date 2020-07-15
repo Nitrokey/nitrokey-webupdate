@@ -457,30 +457,45 @@ async function update_() {
   let addresses = blocks.keys();
 
   let addr = addresses.next();
-  let chunk_size = CONST_chunk_size;
+  const chunk_size = CONST_chunk_size;
   console.log("WRITING...");
   app.update_status = "Update is running";
   app.app_step = const_app_steps.update_ongoing;
   app.p_progress = 0;
 
+  let myStorage = window.localStorage;
+  localStorage.setItem('update', 'in-progress');
+  // localStorage.setItem('u-state', 0);
+
+  const starti = parseInt(localStorage.getItem('u-state'));
+
   while (!addr.done) {
     const data = blocks.get(addr.value);
-    for (let i = 0; i < data.length; i += chunk_size) {
+    for (let i = starti; i < data.length; i += chunk_size) {
+
       await sleep(20);
       if (!app.cancel_animation && i>0){
         cancel_animation();
       }
       const chunk = data.slice(i, i + chunk_size);
 
-      const p = await ctaphid_via_webauthn(
-        CMD.boot_write,
-        addr.value + i,
-        chunk
-      );
-      if (typeof p === "undefined" || p.status === 'CTAP1_SUCCESS') {
-        console.log("Failed reply: ", p);
-        update_failure();
-        return;
+      localStorage.setItem('u-state', i+chunk_size);
+
+      while(true){
+        const p = await ctaphid_via_webauthn(
+          CMD.boot_write,
+          addr.value + i,
+          chunk
+        );
+        await sleep(20);
+        if (typeof p === "undefined" || p.status === 'CTAP1_SUCCESS') {
+          console.log("Failed reply: ", p);
+          console.log("retry for ", i);
+          // update_failure();
+          // return;
+        } else {
+          break;
+        }
       }
       // TEST(p.status !== 'CTAP1_SUCCESS', 'Device wrote data');
 
