@@ -316,6 +316,9 @@ async function inspect_() {
       || (need[0] === have[0] && need[1] === have[1] && need[2] > have[2])
     ;
   }
+    console.log("Forcing true to update. Previous value: ", app.needs_update);
+    app.needs_update = true;
+
   app.app_step = const_app_steps.after_inspection;
 }
 
