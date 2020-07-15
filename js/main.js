@@ -80,7 +80,8 @@ async function inspect_browser() {
   if (platform.os["family"] === "Linux") {
     app.is_linux = true;
   }
-  if (platform.name === "Chrome" && platform.os["family"] !== "Windows" || platform.name === "Safari" || platform.os["family"] === "Windows"){
+  if (platform.name === "Chrome" && platform.os["family"] !== "Windows" || platform.name === "Safari"
+  ){
     app.is_not_supported_configuration = true;
   }
 }
