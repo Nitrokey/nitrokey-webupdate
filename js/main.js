@@ -81,26 +81,49 @@ async function inspect_browser() {
     app.is_linux = true;
   }
   if (platform.name === "Chrome" && platform.os["family"] !== "Windows" || platform.name === "Safari"
-  ){
+  ) {
     app.is_not_supported_configuration = true;
   }
 }
 
-async function run_bootloader() {
+async function send_command(cmd, allow_failure) {
+  return send_command_long(cmd, null, null, allow_failure);
+}
 
-  await ctaphid_via_webauthn(
-    CMD.solo_bootloader, null, null, 1000
-  ).then(response => {
-      console.log("bootloader RESPONSE", response);
-      // FIXME handle failure in call
-      app.cannot_flash = null;
-      app.bootloader_called = true;
-      app.app_step = const_app_steps.bootloader_executed;
+async function send_command_long(cmd, addr, data, allow_failure) {
+  const ATTEMPTS = 5;
+  for (let counter = 0; true; counter++) {
+    let p = "undefined";
+    try {
+      p = await ctaphid_via_webauthn(cmd, addr, data);
+    } catch (e) {
+      console.exception("Error while getting ctaphid reply", e);
     }
-  )
-    .catch(error => {
-      console.log(error);
-    });
+    if (typeof p === "undefined" || p.status === 'CTAP1_SUCCESS') {
+      if (allow_failure && counter >= ATTEMPTS) {
+        return p;
+      }
+      console.log("Failed reply for command: ", cmd, p);
+      console.log("retry for ", counter);
+      await sleep(200);
+      continue;
+    }
+    return p;
+  }
+}
+
+async function run_bootloader() {
+  try {
+    const response = await send_command(CMD.solo_bootloader, true);
+    console.log("bootloader RESPONSE", response);
+    // FIXME handle failure in call in UI
+    app.cannot_flash = null;
+    app.bootloader_called = true;
+    app.app_step = const_app_steps.bootloader_executed;
+  } catch (error) {
+    console.log(error);
+    console.exception()
+  }
 
 }
 
@@ -122,29 +145,22 @@ async function exit_bootloader() {
 }
 
 async function check_version() {
-  await ctaphid_via_webauthn(
-    // option a) timeout --> leads to ugly persistent popup in chrome (firefox is better)
-    CMD.solo_version, null, null, 1000
-    // option b) no timeout --> user needs to click cancel
-    // CMD.solo_version,
-  ).then(response => {
-      console.log("check-version RESPONSE", response);
-      if (response && typeof response !== "undefined") {
-        app.solo_version_parts = response.slice(0, 3);
-        app.solo_version = response[0] + '.' + response[1] + '.' + response[2];
-        app.solo_version_str = '';
-        app.device_state = const_device_state.normal_mode;
-        app.is_solo_secure = true;
-      } else {
-        // we assume this is a pre-1.1.0 solo
-        app.solo_version_parts = new Uint8Array([0, 0, 0]);
-        app.solo_version = "unknown";
-      }
+  try {
+    const response = await send_command(CMD.solo_version, false);
+    console.log("check-version RESPONSE", response);
+    if (response && typeof response !== "undefined") {
+      app.solo_version_parts = response.slice(0, 3);
+      app.solo_version = response[0] + '.' + response[1] + '.' + response[2];
+      app.solo_version_str = '';
+      app.device_state = const_device_state.normal_mode;
+      app.is_solo_secure = true;
+    } else {
+      app.solo_version_parts = new Uint8Array([0, 0, 0]);
+      app.solo_version = "unknown";
     }
-  )
-    .catch(error => {
-      console.log(error);
-    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function fetch_stable_version() {
@@ -360,8 +376,7 @@ async function fetch_firmware() {
 
 async function is_bootloader() {
   app.device_state = const_device_state.not_set;
-
-  const response = await ctaphid_via_webauthn(CMD.boot_check, null, null, 1000);
+  const response = await send_command(CMD.boot_check, true);
   console.log("Boot check", response);
   if (response === undefined) {
     app.device_state = const_device_state.not_available;
@@ -473,14 +488,14 @@ async function update_() {
   localStorage.setItem('update', 'in-progress');
   // localStorage.setItem('u-state', 0);
 
-  const starti = parseInt(localStorage.getItem('u-state'));
+  const starti = 0; //parseInt(localStorage.getItem('u-state')); //todo support resume
 
   while (!addr.done) {
     const data = blocks.get(addr.value);
     for (let i = starti; i < data.length; i += chunk_size) {
 
       await sleep(20);
-      if (!app.cancel_animation && i>0){
+      if (!app.cancel_animation && i > 0) {
         cancel_animation();
       }
       const chunk = data.slice(i, i + chunk_size);
@@ -493,10 +508,10 @@ async function update_() {
           addr.value + i,
           chunk
         );
-        await sleep(20);
         if (typeof p === "undefined" || p.status === 'CTAP1_SUCCESS') {
           console.log("Failed reply: ", p);
           console.log("retry for ", i);
+          await sleep(200);
           // update_failure();
           // return;
         } else {
