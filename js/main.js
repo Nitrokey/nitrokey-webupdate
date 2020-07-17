@@ -1,6 +1,7 @@
 var app = new Vue({
   el: '#app',
   data: {
+    advanced_buttons: false,
     update_failure_reason: '',
     platform_description: '',
     webauthn_support: '',
@@ -91,6 +92,14 @@ async function inspect_browser() {
 
 async function force_bad_platform(){
   app.is_not_supported_configuration = false;
+}
+
+async function force_run_update(){
+  app.needs_update  = true;
+}
+
+async function show_advanced_buttons(){
+  app.advanced_buttons = !app.advanced_buttons;
 }
 
 async function send_command(cmd, allow_failure) {
@@ -350,8 +359,8 @@ async function inspect_() {
       || (need[0] === have[0] && need[1] === have[1] && need[2] > have[2])
     ;
   }
-  console.log("Forcing true to update. Previous value: ", app.needs_update);
-  app.needs_update = true;
+  // console.log("Forcing true to update. Previous value: ", app.needs_update);
+  // app.needs_update = true;
 
   app.app_step = const_app_steps.after_inspection;
 }

@@ -57,8 +57,10 @@
             <p>
               More information about supported browsers can be found here: <a href="https://github.com/Nitrokey/nitrokey-webupdate/blob/master/README.md">Readme file</a>.
             </p>
-            <br/>
-            <button class="button is-primary" onclick="force_bad_platform()">I want to try anyway (advanced)</button>
+            <div v-if="advanced_buttons" >
+              <br/>
+              <button class="button is-primary" onclick="force_bad_platform()">I want to try anyway (advanced)</button>
+            </div>
           </div>
         </article>
       </template>
@@ -171,6 +173,10 @@
               <p>
                 Your firmware is up to date! There is no need to run the update.
               </p>
+              <div v-if="advanced_buttons" >
+                <br/>
+                <button class="button is-primary" onclick="force_run_update()" v-if="what_is_it ">I want to force update (advanced)</button>
+              </div>
             </div>
           </article>
 
@@ -388,7 +394,10 @@
       </div>
       <br><br>
 
-<!--      <button class="button is-light" onclick="toggle_advanced_mode2()">Advanced Mode</button>-->
+
+      <button class="button is-light" onclick="show_advanced_buttons()">Advanced Mode: {{advanced_buttons}}</button>
+
+      <!--      <button class="button is-light" onclick="toggle_advanced_mode2()">Advanced Mode</button>-->
 
       <template v-if="false && show_advanced_mode && advanced_mode">
 
