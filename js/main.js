@@ -269,7 +269,7 @@ async function run_animation(time_seconds) {
 }
 
 async function inspect() {
-  try{
+  try {
     return await inspect_();
   } catch (e) {
     console.log(e);
@@ -344,8 +344,8 @@ async function inspect_() {
       || (need[0] === have[0] && need[1] === have[1] && need[2] > have[2])
     ;
   }
-    console.log("Forcing true to update. Previous value: ", app.needs_update);
-    app.needs_update = true;
+  console.log("Forcing true to update. Previous value: ", app.needs_update);
+  app.needs_update = true;
 
   app.app_step = const_app_steps.after_inspection;
 }
@@ -355,7 +355,7 @@ async function fetch_firmware() {
   url_base = "data/";
   let fname = firmware_file_name[app.what_is_it]
 
-  if (!app.stable_version){
+  if (!app.stable_version) {
     console.log("Invalid stable version", app.stable_version);
     throw "Invalid stable version";
   }
@@ -364,7 +364,7 @@ async function fetch_firmware() {
   console.log(file_url);
 
   let fetched = await fetch(file_url);
-  if (!fetched.ok){
+  if (!fetched.ok) {
     app.update_failure_reason = fetched.statusText + ' at ' + fetched.url;
   }
   let content = await fetched.json();
@@ -432,7 +432,7 @@ function update_failure() {
 }
 
 async function update() {
-  try{
+  try {
     return await update_();
   } catch (e) {
     console.log(e);
@@ -447,7 +447,7 @@ async function update_() {
   if (app.user_selected_device) {
     app.what_is_it = app.user_selected_device;
   }
-  run_animation(15*5*2);
+  run_animation(15 * 5 * 2);
   let bootloader_exec_success = false;
   app.app_step = const_app_steps.bootloader_execution_start;
   for (let i = 0; i < 5; i++) {
