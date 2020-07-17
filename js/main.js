@@ -43,6 +43,7 @@ var app = new Vue({
     solo_version_str: '',
     bootloader_execution_attempt: 0,
     update_paused: false,
+    platform_os_is_windows: false,
   }
 });
 
@@ -73,6 +74,7 @@ async function toggle_advanced_mode() {
 
 async function inspect_browser() {
   app.platform_description = platform.description;
+  app.platform_os_is_windows = platform.os["family"] === "Windows";
   if (!window.PublicKeyCredential) {
     app.webauthn_support = "(unsupported; your browser does not support WebAuthn, please use another one)";
   } else {

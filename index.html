@@ -282,7 +282,14 @@
               <p>DO NOT TOUCH YOUR PC</p>
             </div>
             <div class="message-body">
+              <span v-if="!platform_os_is_windows || platform_os_is_windows && p_progress > 0.1" >
               During the firmware update, you will see flashing popups - <strong>ignore them!</strong>
+                </span>
+              <br/>
+              <div v-if="platform_os_is_windows && p_progress <= 0.1 "> Please <strong>cancel</strong> the following popup:
+                <br/>
+                <img src="images/webupdate-cancel-arr.png" />
+              </div>
               <br/>
               Do NOT change application focus (e.g. by "tabbing out") during the update, or it will abort.
             </div>
@@ -294,7 +301,7 @@
 
         <!--          <button onclick="update()" class="button is-primary" v-if="what_is_it">Reflash {{what_is_it}}</button>-->
         <p v-if="app_step===const_app_steps.update_ongoing">
-          <span v-if="update_status" v-text="update_status"></span> <span v-if="update_status && update_paused"> (paused; click window to continue) </span>
+          <span v-if="update_status" v-text="update_status"></span> <span v-if="update_status && update_paused"> (paused; click this window to continue) </span>
           <br>
           <span v-if="update_progress" v-text="update_progress"></span>
           <progress class="progress is-success is-large" max="100" v-bind:value="p_progress">{{
