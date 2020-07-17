@@ -83,10 +83,14 @@ async function inspect_browser() {
   if (platform.os["family"] === "Linux") {
     app.is_linux = true;
   }
-  if (platform.name === "Chrome" && platform.os["family"] !== "Windows" || platform.name === "Safari"
-  ) {
+  // if (platform.name === "Chrome" && platform.os["family"] !== "Windows" || platform.name === "Safari"
+  if (platform.name !== "Firefox") {
     app.is_not_supported_configuration = true;
   }
+}
+
+async function force_bad_platform(){
+  app.is_not_supported_configuration = false;
 }
 
 async function send_command(cmd, allow_failure) {
