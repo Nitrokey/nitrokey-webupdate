@@ -45,21 +45,18 @@
             <p>Unsupported OS/browser configuration</p>
           </div>
           <div class="message-body">
+            <p>This OS/browser configuration ({{platform_description}}) is not supported at the moment.</p>
 
-            <p>Firmware updates are disabled due to a bug. We are working on solving it.</p>
+            <p>We experience UI issues while executing update on Windows 10 using browsers other than Firefox, therefore such are temporarily disabled by default.
+              We are working to restore support for them.</p>
 
-<!--            <p>This OS/browser configuration ({{platform_description}}) is not supported at the moment.</p>-->
-<!--            <p>We experience UI issues while executing update on Windows 10 using browsers other than Firefox, therefore such are temporarily disabled by default.-->
-<!--              We are working to restore support for them.</p>-->
-
-<!--            <p>-->
-<!--              Please use Firefox browser for the time of the update. It can be downloaded here:-->
-<!--              <a href="https://www.mozilla.org/en-US/firefox/new/" >Firefox download page</a>.-->
-<!--            </p>-->
-<!--            <p>-->
-<!--              More information about supported browsers can be found here: <a href="https://github.com/Nitrokey/nitrokey-webupdate/blob/master/README.md">Readme file</a>.-->
-<!--            </p>-->
-
+            <p>
+              Please use Firefox browser for the time of the update. It can be downloaded here:
+              <a href="https://www.mozilla.org/en-US/firefox/new/" >Firefox download page</a>.
+            </p>
+            <p>
+              More information about supported browsers can be found here: <a href="https://github.com/Nitrokey/nitrokey-webupdate/blob/master/README.md">Readme file</a>.
+            </p>
             <div v-if="advanced_buttons" >
               <br/>
               <button class="button is-primary" onclick="force_bad_platform()">I want to try anyway (advanced)</button>
