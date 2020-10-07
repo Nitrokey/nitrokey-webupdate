@@ -224,14 +224,30 @@
               <p>Executing bootloader - do not touch your computer</p>
             </div>
             <div class="message-body">
-              <ol>
-                <li><strong>WARNING:</strong> Once the update process is started, do not make any operations on the computer! Ignore browser and system popups (e.g. about trying another key)!
-                  Otherwise your Nitrokey may be bricked.
-                </li>
-                <li><strong>WARNING:</strong> Each time the device is blinking with a white light, touch it until it rapidly blinks colorful.
-                  If after 10 seconds it won't change from white to colorful light, release it and repeat. Do not touch the device while it blinks with colorful light.
-                </li>
-              </ol>
+
+              <div class="columns">
+                <div class="column">
+                  <div v-if="platform_os_is_windows"> Please <strong>cancel</strong> the following popup:
+                    <br/>
+                    <img src="images/webupdate-cancel-bootloader-arr.png"/>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <ol>
+                    <li><strong>WARNING:</strong> Once the update process is started, do not make any operations on the
+                      computer! Ignore browser and system popups (e.g. about trying another key)!
+                      Otherwise your Nitrokey may be bricked.
+                    </li>
+                    <li><strong>WARNING:</strong> Each time the device is blinking with a white light, touch it until it
+                      rapidly blinks colorful.
+                      If after 10 seconds it won't change from white to colorful light, release it and repeat. Do not
+                      touch the device while it blinks with colorful light.
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
             </div>
 
           </article>
