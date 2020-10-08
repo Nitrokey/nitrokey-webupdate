@@ -1,13 +1,14 @@
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import ssl
 import sys
+import os
 
 # U2F requires serving over https
 # WebAuthn does not
 https = True
 # https = '--https' in sys.argv
 
-host = "192.168.0.14" if https else 'localhost'
+host = os.getenv("NK_IP", default = 'localhost') if https else 'localhost'
 port = 8443 if https else 8080
 protocol = f"http{'s' if https else ''}"
 url = f"{protocol}://{host}:{port}"
