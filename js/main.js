@@ -468,12 +468,15 @@ async function update_() {
   run_animation(15 * 5 * 2);
   let bootloader_exec_success = false;
   app.app_step = const_app_steps.bootloader_execution_start;
+  if (!await is_bootloader()) {
+    await sleep(5000); // delay allowing user to read the on-screen messages
+  }
   for (let i = 0; i < 5; i++) {
     app.bootloader_execution_attempt = i + 1;
     try {
-      sleep(50);
+      await sleep(50);
       if (!await is_bootloader()) {
-        sleep(50);
+        await sleep(50);
         // ask for running the bootloader
         await run_bootloader();
       } else {
@@ -481,6 +484,7 @@ async function update_() {
         break;
       }
     } catch (e) {
+      console.log("Failed executing bootloader", e);
     }
   }
 
